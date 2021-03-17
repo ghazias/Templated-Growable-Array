@@ -8,7 +8,7 @@ template <typename T>
 class Array {
   public:
     Array() : data_{new T[2]{}}, size_{0}, capacity_{2} {}
-	Array(std::size_t size) : size_{size}, data_{new T[size]{}} {} // constructor
+	Array(std::size_t size) : data_{new T[size]{}}, size_{size}, capacity_{size} {} // constructor
 	~Array() { delete[] data_; } // destructor
 	Array(const Array& original) : data_{new T[original.capacity()]{}}, size_{original.size()}, capacity_{original.capacity()} {
 	  	for (std::size_t i = 0; i < size(); ++i) {
