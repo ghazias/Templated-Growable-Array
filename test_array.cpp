@@ -4,4 +4,5 @@
 
 TEST_CASE("Constructor") {
 	dsc::Array<int> arr;
+	REQUIRE(arr.size() == 0);
 }

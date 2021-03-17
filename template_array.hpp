@@ -10,23 +10,25 @@ class Array {
     Array() : data_{new T[2]{}}, size_{0}, capacity_{2} {}
 	Array(std::size_t size) : size_{size}, data_{new T[size]{}} {} // constructor
 	~Array() { delete[] data_; } // destructor
-	Array(const dsc::Array& original) {
-	  	
+	Array(const Array& original) : data_{new T[original.capacity()]{}}, size_{original.size()}, capacity_{original.capacity()} {
+	  	for (std::size_t i = 0; i < size(); ++i) {
+	  		data_[i] = original[i];
+	  	}
 	}
 	T& operator[](std::size_t i) { return data_[i]; }
 	const T& operator[](std::size_t i) const { return data_[i]; }
-	bool operator==(const dsc::Array& other) const {
+	bool operator==(const Array& other) const {
 	  if (size() != other.size()) { return false; }
 	  
 	  for(std::size_t i = 0; i < size(); i++) {
-        if (array_[i] != other.array_[i]) { return false; }
+        if (data_[i] != other.data_[i]) { return false; }
       }
       return true;
 	}
-	bool operator!=(const dsc::Array& other) const {
+	bool operator!=(const Array& other) const {
 		return !(*this == other);
 	}
-	Array& operator=(const dsc::Array&) {
+	Array& operator=(const Array& other) {
 		if (this == &other) {
 			return *this;
 		}
@@ -50,7 +52,7 @@ class Array {
 		if (index > size()) {
 			throw std::out_of_range("index out of array bounds");
 		} else {
-			return array_[index];
+			return data_[index];
 		}
 	}
 	T& front() { return data_[0]; }
@@ -58,7 +60,7 @@ class Array {
 	T* data() { return data_;}
 	
 	T* begin() { return data_; }
-	T* end() { return data_ + size() }
+	T* end() { return data_ + size(); }
 	const T* begin() const { return data_; }
 	const T* end() const { return data_ + size(); }
 	
@@ -100,10 +102,10 @@ class Array {
 	}
 	  
 	private:
+	  T* data_{};
 	  std::size_t size_{};
 	  std::size_t capacity_{};
-	  T* data_{};
-}
+};
 } // namespace dsc
 
 #endif // TEMPLATE_ARRAY
