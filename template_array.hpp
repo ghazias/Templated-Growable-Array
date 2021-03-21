@@ -57,7 +57,7 @@ class Array {
 	}
 	T& front() { return data_[0]; }
 	T& back() { return data_[size() - 1]; }
-	T* data() { return data_;}
+	T* data() { return data_; }
 	
 	T* begin() { return data_; }
 	T* end() { return data_ + size(); }
@@ -79,6 +79,9 @@ class Array {
 		data_ = resized_array;
 	}
 	T pop_back() {
+		if (size() == 0) {
+			return;
+		}
 		T result = (*this)[size() - 1];
 		(*this)[size() - 1] = nullptr;
 		--size_;
