@@ -5,16 +5,16 @@
 
 TEST_CASE("Empty constructor test") {
   dsc::Array<int> arr;
-  
+
   REQUIRE(arr.size() == 0);
   REQUIRE(arr.capacity() == 3);
 }
 
 TEST_CASE("Size constructor test") {
-	dsc::Array<char> arr(8);
-	
-	REQUIRE(arr.size() == 0);
-	REQUIRE(arr.capacity() == 8);
+  dsc::Array<char> arr(8);
+
+  REQUIRE(arr.size() == 0);
+  REQUIRE(arr.capacity() == 8);
 }
 
 TEST_CASE("Can set and access array elements") {
@@ -41,13 +41,13 @@ TEST_CASE("Can set and access array elements of ints") {
 }
 
 TEST_CASE("Arrays can be copy constructed; deep copy") {
-	dsc::Array<int> source(3);
-	source[0] = 8;
-	source[1] = 9;
-	source[2] = 10;
-	
-	dsc::Array<int> copy(source);
-	REQUIRE(&copy.at(0) != &source.at(0));
+  dsc::Array<int> source(3);
+  source[0] = 8;
+  source[1] = 9;
+  source[2] = 10;
+
+  dsc::Array<int> copy(source);
+  REQUIRE(&copy.at(0) != &source.at(0));
 }
 
 TEST_CASE("Copy constructed array has correct values") {
@@ -56,51 +56,53 @@ TEST_CASE("Copy constructed array has correct values") {
   source[1] = "my name is ";
   source[2] = "Adrian";
 
-  dsc::Array<std::string> copy(source); // better to compare with literals or src contents?
+  dsc::Array<std::string> copy(
+      source);  // better to compare with literals or src contents?
   REQUIRE(copy.at(0) == "Hello, ");
   REQUIRE(copy.at(1) == "my name is ");
   REQUIRE(copy.at(2) == "Adrian");
-  
+
   REQUIRE(copy.size() == source.size());
   REQUIRE(copy.capacity() == source.capacity());
 }
 
 TEST_CASE("Copy assignment") {
-	dsc::Array<int> source;
-	source[0] = 12;
-	source[1] = 13;
-	source[2] = 14;
-	dsc::Array<int> copy = source;
-	
-	REQUIRE(copy.at(0) == 12);
-	REQUIRE(&copy.at(0) != &source.at(0));
-	
-	REQUIRE(copy.at(1) == 13);
-	REQUIRE(&copy.at(1) != &source.at(1));
-	
-	REQUIRE(copy.at(2) == 14);
-	REQUIRE(&copy.at(2) != &source.at(2));
+  dsc::Array<int> source;
+  source[0] = 12;
+  source[1] = 13;
+  source[2] = 14;
+  dsc::Array<int> copy = source;
+
+  REQUIRE(copy.at(0) == 12);
+  REQUIRE(&copy.at(0) != &source.at(0));
+
+  REQUIRE(copy.at(1) == 13);
+  REQUIRE(&copy.at(1) != &source.at(1));
+
+  REQUIRE(copy.at(2) == 14);
+  REQUIRE(&copy.at(2) != &source.at(2));
 }
 
 TEST_CASE("Arrays can be move constructed") {
-	dsc::Array<int> original(6);
-	original[0] = 4;
-	original[1] = 6;
-	original[2] = 7;
-	original[3] = 9;
-	original[4] = 22;
-	original[5] = 54;
-	
-	int* addresses[] = {&original.at(0), &original.at(1), &original.at(2), &original.at(3), &original.at(4), &original.at(5)};
-	
-	dsc::Array<int> moved = std::move(original);
-	REQUIRE(moved.at(0) == 4);
-	REQUIRE(moved.at(1) == 6);
-	REQUIRE(moved.at(2) == 7);
-	
-	REQUIRE(&moved.at(0) == addresses[0]);
-	REQUIRE(&moved.at(1) == addresses[1]);
-	REQUIRE(&moved.at(2) == addresses[2]);
+  dsc::Array<int> original(6);
+  original[0] = 4;
+  original[1] = 6;
+  original[2] = 7;
+  original[3] = 9;
+  original[4] = 22;
+  original[5] = 54;
+
+  int* addresses[] = {&original.at(0), &original.at(1), &original.at(2),
+                      &original.at(3), &original.at(4), &original.at(5)};
+
+  dsc::Array<int> moved = std::move(original);
+  REQUIRE(moved.at(0) == 4);
+  REQUIRE(moved.at(1) == 6);
+  REQUIRE(moved.at(2) == 7);
+
+  REQUIRE(&moved.at(0) == addresses[0]);
+  REQUIRE(&moved.at(1) == addresses[1]);
+  REQUIRE(&moved.at(2) == addresses[2]);
 }
 
 TEST_CASE("== Operator") {
@@ -142,7 +144,7 @@ TEST_CASE("Arrays have correct capacity") {
 TEST_CASE("At() returns correct address") {
   dsc::Array<float> empty(0);
   REQUIRE_THROWS(empty.at(0));
-  
+
   dsc::Array<char> nonempty(3);
   nonempty[0] = 't';
   nonempty[1] = 'k';
@@ -186,17 +188,17 @@ TEST_CASE("Can access data()") {
 TEST_CASE("Reserve()") {
   dsc::Array<int> test(4);
   test.reserve(13);
-  
+
   REQUIRE(test.capacity() == 13);
 }
 
 TEST_CASE("pop_back()") {
   dsc::Array<int> test(6);
   test[0] = 20;
-  REQUIRE(test.pop_back() == 20); // pop list with one element
+  REQUIRE(test.pop_back() == 20);  // pop list with one element
   REQUIRE(test.size() == 0);
-  
-  test[0] = 62; // pop list with more than one element
+
+  test[0] = 62;  // pop list with more than one element
   test[1] = 88;
   test[2] = 4;
   REQUIRE(test.pop_back() == 4);
@@ -217,15 +219,15 @@ TEST_CASE("push_back()") {
 }
 
 TEST_CASE("push_back() stress test") {
-	dsc::Array<std::size_t> test(3005);
-	
-	for (std::size_t i = 0; i < test.size(); ++i) {
-		test.push_back(i);
-	}
-	
-	for (std::size_t i = 0; i < test.size(); ++i) {
-		REQUIRE(test.at(i) == i);
-	}
+  dsc::Array<std::size_t> test(3005);
+
+  for (std::size_t i = 0; i < test.size(); ++i) {
+    test.push_back(i);
+  }
+
+  for (std::size_t i = 0; i < test.size(); ++i) {
+    REQUIRE(test.at(i) == i);
+  }
 }
 
 TEST_CASE("insert()") {
