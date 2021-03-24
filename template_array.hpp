@@ -3,18 +3,19 @@
 
 #include <stdexcept>
 
-constexpr std::size_t DEFAULTCAP = 3;
-
 namespace dsc {
 template <typename T>
 class Array {
+ private:
+ static constexpr std::size_t DEFAULT_CAPACITY = 3;
+
  public:
   Array()
-      : data_{new T[DEFAULTCAP]{}},
-        size_{0},
-        capacity_{DEFAULTCAP} {}  // empty constructor
+      : data_{new T[DEFAULT_CAPACITY]{}},
+        size_{},
+        capacity_{DEFAULT_CAPACITY} {}  // empty constructor
   Array(std::size_t size)
-      : data_{new T[size]{}}, size_{0}, capacity_{size} {}  // constructor
+      : data_{new T[size]{}}, size_{size}, capacity_{size} {}  // constructor
   ~Array() { delete[] data_; }                              // destructor
   Array(const Array& original)
       : data_{new T[original.capacity()]{}},
@@ -78,7 +79,7 @@ class Array {
   std::size_t capacity() const { return capacity_; }
 
   T& at(std::size_t index) {
-    if (index > size() || index < 0 || size() == 0) {
+    if (index >= size()) {
       throw std::out_of_range("index out of array bounds");
     } else {
       return data_[index];
@@ -86,7 +87,7 @@ class Array {
   }
 
   const T& at(std::size_t index) const {
-    if (index > size() || index < 0 || size() == 0) {
+    if (index > size()) {
       throw std::out_of_range("index out of array bounds");
     } else {
       return data_[index];
@@ -95,6 +96,8 @@ class Array {
   T& front() { return data_[0]; }
   T& back() { return data_[size() - 1]; }
   T* data() { return data_; }
+  const T* data() const { return data_; }
+
 
   T* begin() { return data_; }
   T* end() { return data_ + size(); }
@@ -116,15 +119,14 @@ class Array {
     data_ = resized_array;
   }
   T pop_back() {
-    T result = (*this)[size() - 1];
+    // T result = (*this)[size() - 1];
+    T result = std::move()
     --size_;
 
     return result;
   }
   void push_back(T value) {
-    if (size() < capacity()) {
-      reserve(capacity());
-    }
+    if (size() < capacity()) { reserve(capacity()); }
     (*this)[size()] = value;
     ++size_;
   }
