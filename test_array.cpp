@@ -1,5 +1,8 @@
 #include <string>
 #include "catch.hpp"
+#include <sstream>
+#include <utility>
+
 #include "template_array.hpp"
 #include "template_array.hpp"  // include guard
 
@@ -58,9 +61,9 @@ TEST_CASE("Copy constructed array has correct values") {
 
   dsc::Array<std::string> copy(
       source);  // better to compare with literals or src contents?
-  REQUIRE(copy.at(0) == "Hello, ");
-  REQUIRE(copy.at(1) == "my name is ");
-  REQUIRE(copy.at(2) == "Adrian");
+  REQUIRE(copy.at(0) == source.at(0));
+  REQUIRE(copy.at(1) == source.at(1));
+  REQUIRE(copy.at(2) == source.at(2));
 
   REQUIRE(copy.size() == source.size());
   REQUIRE(copy.capacity() == source.capacity());
@@ -83,6 +86,20 @@ TEST_CASE("Copy assignment") {
   REQUIRE(&copy.at(2) != &source.at(2));
 }
 
+TEST_CASE("Copy assignment handles self assignment correctly") {
+  dsc::Array<double> arr(4);
+  arr[0] = 12.1;
+  arr[1] = 12.5;
+  arr[2] = 13.3;
+  arr[3] = 18.9;
+
+  int* addresses[] = {&arr[0], &arr[1], &arr[2]};
+  arr = arr;
+  
+  REQUIRE(&arr == )
+
+}
+
 TEST_CASE("Arrays can be move constructed") {
   dsc::Array<int> original(6);
   original[0] = 4;
@@ -100,9 +117,26 @@ TEST_CASE("Arrays can be move constructed") {
   REQUIRE(moved.at(1) == 6);
   REQUIRE(moved.at(2) == 7);
 
+  REQUIRE(moved.size() == original.size());
+  REQUIRE(moved.capacity() == original.capacity());
+
   REQUIRE(&moved.at(0) == addresses[0]);
   REQUIRE(&moved.at(1) == addresses[1]);
   REQUIRE(&moved.at(2) == addresses[2]);
+}
+
+TEST_CASE("Arrays can be move assigned; larger = smaller") {
+  dsc::Array<float> smaller(4);
+  smaller[0] = 50.5;
+  smaller[1] = 51.4;
+  smaller[2] = 52.3;
+  smaller[3] = 53.2;
+
+  dsc::Array<float> larger(10);
+  larger = std::move(smaller);
+  ////////////////////////////////////////////////////////////
+  REQUIRE(larger.size() == 10);
+  REQUIRE(larger.capacity() == )
 }
 
 TEST_CASE("== Operator") {
@@ -118,7 +152,10 @@ TEST_CASE("== Operator") {
 
   REQUIRE_FALSE(test == test2);
 
-  dsc::Array<int> test3 = test2;
+  dsc::Array<int> test3(3);
+  test3[0] = 88;
+  test3[1] = 17;
+  test3[2] = 15;
   REQUIRE(test2 == test3);
 }
 
