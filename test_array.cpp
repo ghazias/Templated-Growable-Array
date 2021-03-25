@@ -1,8 +1,8 @@
-#include <string>
-#include "catch.hpp"
 #include <sstream>
+#include <string>
 #include <utility>
 
+#include "catch.hpp"
 #include "template_array.hpp"
 #include "template_array.hpp"  // include guard
 
@@ -16,7 +16,7 @@ TEST_CASE("Empty constructor test") {
 TEST_CASE("Size constructor test") {
   dsc::Array<char> arr(8);
 
-  REQUIRE(arr.size() == 0);
+  REQUIRE(arr.size() == 8);
   REQUIRE(arr.capacity() == 8);
 }
 
@@ -59,8 +59,7 @@ TEST_CASE("Copy constructed array has correct values") {
   source[1] = "my name is ";
   source[2] = "Adrian";
 
-  dsc::Array<std::string> copy(
-      source);  // better to compare with literals or src contents?
+  dsc::Array<std::string> copy(source);
   REQUIRE(copy.at(0) == source.at(0));
   REQUIRE(copy.at(1) == source.at(1));
   REQUIRE(copy.at(2) == source.at(2));
@@ -70,7 +69,7 @@ TEST_CASE("Copy constructed array has correct values") {
 }
 
 TEST_CASE("Copy assignment") {
-  dsc::Array<int> source;
+  dsc::Array<int> source(3);
   source[0] = 12;
   source[1] = 13;
   source[2] = 14;
@@ -87,17 +86,18 @@ TEST_CASE("Copy assignment") {
 }
 
 TEST_CASE("Copy assignment handles self assignment correctly") {
-  dsc::Array<double> arr(4);
-  arr[0] = 12.1;
-  arr[1] = 12.5;
-  arr[2] = 13.3;
-  arr[3] = 18.9;
+  dsc::Array<int> arr(4);
+  arr[0] = 12;
+  arr[1] = 14;
+  arr[2] = 13;
+  arr[3] = 18;
 
-  int* addresses[] = {&arr[0], &arr[1], &arr[2]};
   arr = arr;
-  
-  REQUIRE(&arr == )
 
+  REQUIRE(arr[0] == 12);
+  REQUIRE(arr[1] == 14);
+  REQUIRE(arr[2] == 13);
+  REQUIRE(arr[3] == 18);
 }
 
 TEST_CASE("Arrays can be move constructed") {
@@ -134,9 +134,8 @@ TEST_CASE("Arrays can be move assigned; larger = smaller") {
 
   dsc::Array<float> larger(10);
   larger = std::move(smaller);
-  ////////////////////////////////////////////////////////////
+
   REQUIRE(larger.size() == 10);
-  REQUIRE(larger.capacity() == )
 }
 
 TEST_CASE("== Operator") {
@@ -160,14 +159,14 @@ TEST_CASE("== Operator") {
 }
 
 TEST_CASE("Arrays have correct size") {
-  REQUIRE(dsc::Array<int>(5).size() == 0);
-  REQUIRE(dsc::Array<std::string>(18).size() == 0);
-  REQUIRE(dsc::Array<double>(300).size() == 0);
+  REQUIRE(dsc::Array<int>(5).size() == 5);
+  REQUIRE(dsc::Array<std::string>(18).size() == 18);
+  REQUIRE(dsc::Array<double>(300).size() == 300);
 }
 
 TEST_CASE("Const arrays have correct size") {
   const dsc::Array<char> arr(8);
-  REQUIRE(arr.size() == 0);
+  REQUIRE(arr.size() == 8);
 }
 
 TEST_CASE("Arrays have correct capacity") {
@@ -231,19 +230,20 @@ TEST_CASE("Reserve()") {
 
 TEST_CASE("pop_back()") {
   dsc::Array<int> test(6);
-  test[0] = 20;
+  test.push_back(20);
   REQUIRE(test.pop_back() == 20);  // pop list with one element
-  REQUIRE(test.size() == 0);
+  REQUIRE(test.size() == 6);
+}
 
-  test[0] = 62;  // pop list with more than one element
-  test[1] = 88;
-  test[2] = 4;
-  REQUIRE(test.pop_back() == 4);
-  REQUIRE(test.size() == 2);
+TEST_CASE("pop_back() last element in array") {
+  dsc::Array<int> test;
+  test.push_back(8);
+  REQUIRE(test.pop_back() == 8);
+  REQUIRE(test.size() == 0);
 }
 
 TEST_CASE("push_back()") {
-  dsc::Array<int> test(4);
+  dsc::Array<int> test;
   // push empty list
   test.push_back(777);
   REQUIRE(test[0] == 777);
@@ -256,13 +256,18 @@ TEST_CASE("push_back()") {
 }
 
 TEST_CASE("push_back() stress test") {
-  dsc::Array<std::size_t> test(3005);
+  constexpr std::size_t N = 3000;
 
-  for (std::size_t i = 0; i < test.size(); ++i) {
+  dsc::Array<std::size_t> test;
+
+  for (std::size_t i = 0; i < N; ++i) {
     test.push_back(i);
   }
 
-  for (std::size_t i = 0; i < test.size(); ++i) {
+  REQUIRE(test.size() == N);
+  REQUIRE(test.capacity() >= N);
+
+  for (std::size_t i = 0; i < N; ++i) {
     REQUIRE(test.at(i) == i);
   }
 }
@@ -282,3 +287,5 @@ TEST_CASE("insert()") {
   REQUIRE(test[1] == 'm');
   REQUIRE(test[2] == 'f');
 }
+
+// write more insert test cases
