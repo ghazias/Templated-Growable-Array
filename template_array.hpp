@@ -7,7 +7,7 @@ namespace dsc {
 template <typename T>
 class Array {
  private:
- static constexpr std::size_t DEFAULT_CAPACITY = 3;
+  static constexpr std::size_t DEFAULT_CAPACITY = 3;
 
  public:
   Array()
@@ -16,7 +16,7 @@ class Array {
         capacity_{DEFAULT_CAPACITY} {}  // empty constructor
   Array(std::size_t size)
       : data_{new T[size]{}}, size_{size}, capacity_{size} {}  // constructor
-  ~Array() { delete[] data_; }                              // destructor
+  ~Array() { delete[] data_; }                                 // destructor
   Array(const Array& original)
       : data_{new T[original.capacity()]{}},
         size_{original.size()},
@@ -67,7 +67,7 @@ class Array {
   }  // copy assignment
 
   Array& operator=(Array&& other) {
-    if (this != other) {
+    if (this != &other) {
       delete[] data_;
       data_ = other.data_;
       other.data_ = nullptr;
@@ -85,6 +85,14 @@ class Array {
       return data_[index];
     }
   }
+  /*
+    std::size_t index{};
+    std::size_t size{};
+
+    std::ostringstream msg;
+    msg << "array access with index: " + index + ""
+    std::string result = msg.str();
+  */
 
   const T& at(std::size_t index) const {
     if (index > size()) {
@@ -97,7 +105,6 @@ class Array {
   T& back() { return data_[size() - 1]; }
   T* data() { return data_; }
   const T* data() const { return data_; }
-
 
   T* begin() { return data_; }
   T* end() { return data_ + size(); }
@@ -119,20 +126,21 @@ class Array {
     data_ = resized_array;
   }
   T pop_back() {
-    // T result = (*this)[size() - 1];
-    T result = std::move()
+    T result = std::move((*this)[size() - 1]);
     --size_;
 
     return result;
   }
   void push_back(T value) {
-    if (size() < capacity()) { reserve(capacity()); }
+    if (size() == capacity()) {
+      reserve(capacity() * 2);
+    }
     (*this)[size()] = value;
     ++size_;
   }
   void insert(T value, std::size_t index) {
     if (size() == capacity()) {
-      reserve(capacity());
+      reserve(capacity() * 2);
     }
     for (std::size_t i = size() - 1; i > index; --i) {
       (*this)[i] = (*this)[i - 1];
